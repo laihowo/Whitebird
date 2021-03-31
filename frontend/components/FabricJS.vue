@@ -1,7 +1,5 @@
 <template>
-  <div id="canvas-wrapper"
-    class="canvas-wrapper"
-    :class="backgroundImage">
+  <div id="canvas-wrapper" class="canvas-wrapper" :class="backgroundImage">
     <canvas id="canvas"> </canvas>
     <client-only>
       <RectangleTool :canvas="canvas"></RectangleTool>
@@ -10,12 +8,8 @@
       <StickyNoteTool :canvas="canvas"></StickyNoteTool>
       <DrawingTool :canvas="canvas"></DrawingTool>
       <DeleteTool :canvas="canvas"></DeleteTool>
-      <PinTool :canvas="canvas"
-        v-on:pin-status="pinStatus = !pinStatus"></PinTool>
-      <LayerTool :canvas="canvas"></LayerTool>
-      <UndoRedoTool :canvas="canvas"></UndoRedoTool>
     </client-only>
-    <ChangeFontFam v-if="editingText"
+    <ChangeFontFam
       v-for="(container, index) in containers"
       :key="index"
       :options="container.options"
@@ -26,38 +20,26 @@
       :object-font-style="container.objectFontStyle"
       :canvas="canvas"
     />
-    <ControlIcon v-on:delete-img="deleteImg = $event"
-      v-on:bringToFront-img="bringToFrontImg = $event"
-      v-on:bringForward-img="bringForwardImg = $event"
-      v-on:sendToBack-img="sendToBackImg = $event"
-      v-on:sendBackwards-img="sendBackwardsImg = $event"
-      v-on:pin-img="pinImg = $event"
-      v-on:unPin-img="unPinImg = $event"
-      v-on:clone-img="cloneImg = $event"></ControlIcon>
   </div>
 </template>
 
 <script>
-import { fabric } from 'fabric'
-import { mapState } from 'vuex'
-import { jsPDF } from 'jspdf'
-import { v4 } from 'uuid'
-import FontFaceObserver from 'fontfaceobserver'
-import StickyNoteTool from '~/components/canvasTools/StickyNoteTool'
-import DrawingTool from '~/components/canvasTools/DrawingTool'
-import RectangleTool from '~/components/canvasTools/RectangleTool'
-import TextboxTool from '~/components/canvasTools/TextboxTool'
-import CircleTool from '~/components/canvasTools/CircleTool'
-import DeleteTool from '~/components/canvasTools/DeleteTool'
-import PinTool from '~/components/canvasTools/PinTool'
-import LayerTool from '~/components/canvasTools/LayerTool'
-import UndoRedoTool from '~/components/canvasTools/UndoRedoTool'
-import customEvents from '~/utils/customEvents'
-import WhitebirdLogger from '~/utils/WhitebirdLogger'
-import ChangeFontFam from '~/components/canvasTools/ChangeFontFam'
-import ControlIcon from '~/components/canvasTools/ControlIcon'
+import { fabric } from 'fabric';
+import { mapState } from 'vuex';
+import { jsPDF } from 'jspdf';
+import { v4 } from 'uuid';
+import FontFaceObserver from 'fontfaceobserver';
+import StickyNoteTool from '~/components/canvasTools/StickyNoteTool';
+import DrawingTool from '~/components/canvasTools/DrawingTool';
+import RectangleTool from '~/components/canvasTools/RectangleTool';
+import TextboxTool from '~/components/canvasTools/TextboxTool';
+import CircleTool from '~/components/canvasTools/CircleTool';
+import DeleteTool from '~/components/canvasTools/DeleteTool';
+import customEvents from '~/utils/customEvents';
+import WhitebirdLogger from '~/utils/WhitebirdLogger';
+import ChangeFontFam from '~/components/canvasTools/ChangeFontFam.vue';
 
-const logger = new WhitebirdLogger('FabricJS.vue')
+const logger = new WhitebirdLogger('FabricJS.vue');
 
 export default {
   components: {
@@ -67,11 +49,7 @@ export default {
     TextboxTool,
     CircleTool,
     DeleteTool,
-    PinTool,
-    LayerTool,
-    UndoRedoTool,
     ChangeFontFam,
-    ControlIcon,
   },
   data() {
     return {
@@ -79,18 +57,7 @@ export default {
       joined: false,
       backgroundImage: 'dots', /* defaults to dots */
       containers: [],
-      pinStatus: false,
-      editingText: false,
-      deleteImg: null,
-      bringToFrontImg: null,
-      bringForwardImg: null,
-      sendToBackImg: null,
-      sendBackwardsImg: null,
-      pinImg: null,
-      unPinImg: null,
-      cloneImg: null,
-      cornerSize: 24,
-    }
+    };
   },
   computed: {
     ...mapState({
@@ -98,115 +65,12 @@ export default {
     }),
   },
   mounted() {
-    this.canvas = new fabric.Canvas('canvas')
-    fabric.disableStyleCopyPaste = true
-
-    // Setting object control handle
-    fabric.Object.prototype.transparentCorners = false
-    fabric.Object.prototype.cornerColor = 'blue'
-    fabric.Object.prototype.cornerStyle = 'circle'
-
-    // Drawing delete icon
-    fabric.Object.prototype.controls.delete = new fabric.Control({
-      x: 0.5,
-      y: -0.5,
-      offsetY: -16,
-      offsetX: 16,
-      cursorStyle: 'pointer',
-      mouseUpHandler: this.deleteObject,
-      render: this.renderIcon(this.deleteImg),
-      cornerSize: this.cornerSize,
-    })
-
-    // Drawing bringToFront icon
-    fabric.Object.prototype.controls.bringToFront = new fabric.Control({
-      x: -0.1,
-      y: -0.5,
-      offsetY: -16,
-      offsetX: -16,
-      cursorStyle: 'pointer',
-      mouseUpHandler: this.bringObjectToFront,
-      render: this.renderIcon(this.bringToFrontImg),
-      cornerSize: this.cornerSize,
-    })
-
-    // Drawing bringFroward icon
-    fabric.Object.prototype.controls.bringForward = new fabric.Control({
-      x: 0.1,
-      y: -0.5,
-      offsetX: -16,
-      offsetY: -16,
-      cursorStyle: 'pointer',
-      mouseUpHandler: this.bringObjectForward,
-      render: this.renderIcon(this.bringForwardImg),
-      cornerSize: this.cornerSize,
-    })
-
-    // Drawing sendToBack icon
-    fabric.Object.prototype.controls.sendToBack = new fabric.Control({
-      x: -0.5,
-      y: -0.5,
-      offsetY: -16,
-      offsetX: -16,
-      cursorStyle: 'pointer',
-      mouseUpHandler: this.sendObjectToBack,
-      render: this.renderIcon(this.sendToBackImg),
-      cornerSize: this.cornerSize,
-    })
-
-    // Drawing sendBackwards icon
-    fabric.Object.prototype.controls.sendBackwards = new fabric.Control({
-      x: -0.3,
-      y: -0.5,
-      offsetX: -16,
-      offsetY: -16,
-      cursorStyle: 'pointer',
-      mouseUpHandler: this.sendObjectBackwards,
-      render: this.renderIcon(this.sendBackwardsImg),
-      cornerSize: this.cornerSize,
-    })
-    
-    // Drawing pin icon
-    fabric.Object.prototype.controls.pin = new fabric.Control({
-      x: 0.5,
-      y: -0.5,
-      offsetX: -16,
-      offsetY: -16,
-      cursorStyle: 'pointer',
-      mouseUpHandler: this.pinObject,
-      render: this.renderIcon(this.pinImg),
-      cornerSize: this.cornerSize,
-    })
-
-    // Drawing unPin icon
-    fabric.Object.prototype.controls.unPin = new fabric.Control({
-      x: 0.5,
-      y: -0.5,
-      offsetX: -16,
-      offsetY: -16,
-      cursorStyle: 'pointer',
-      mouseUpHandler: this.unPinObject,
-      render: this.renderIcon(this.unPinImg),
-      cornerSize: this.cornerSize,
-      visible: false,
-    })
-
-    // Drawing clone icon
-    // fabric.Object.prototype.controls.clone = new fabric.Control({
-    //   x: -0.5,
-    //   y: -0.5,
-    //   offsetY: -16,
-    //   offsetX: -16,
-    //   cursorStyle: 'pointer',
-    //   mouseUpHandler: this.cloneObject,
-    //   render: this.renderIcon(this.cloneImg),
-    //   cornerSize: this.cornerSize,
-    // })
-
-    this.reloadCanvas()
+    this.canvas = new fabric.Canvas('canvas');
+    fabric.disableStyleCopyPaste = true;
+    this.reloadCanvas();
 
     if (process.client) {
-      window.addEventListener('resize', this.onResize)
+      window.addEventListener('resize', this.onResize);
     }
 
     // Socket Reference
@@ -275,69 +139,47 @@ export default {
     this.$nuxt.$emit(customEvents.canvasTools.setRemoveObjectEventListener, true);
 
     this.canvas.on('selection:created', (options) => {
-      var selectedGroup = options.target
-
-      if (selectedGroup.type && selectedGroup.type === 'activeSelection') {
-        const invisibleControls = ['mt', 'mr', 'ml', 'mb', 'tr', 'tl', 'bl', 'br', 'mtr']
+      if (options.target.type && options.target.type === 'activeSelection') {
+        const invisibleControls = ['mt', 'mr', 'ml', 'mb', 'tr', 'tl', 'bl', 'br', 'mtr'];
         invisibleControls.forEach((side) => {
-          selectedGroup.setControlVisible(side, false)
-        })
-
-        // Only the unlocked objects can be moved in the selected group.
-        var selectedObjs = selectedGroup._objects
-        var i
-        for (i = 0; i < selectedObjs.length; i++) {
-          if (selectedObjs[i].lockRotation == true) {
-            selectedGroup.removeWithUpdate(selectedObjs[i])
-          }
-        }
+          options.target.setControlVisible(side, false);
+        });
       }
-    })
+    });
 
     this.canvas.on('mouse:down', (options) => {
-      this.$nuxt.$emit(customEvents.canvasTools.CloseAllWhiteBoardControls, options)
-      const canvasObject = options.target
+      this.$nuxt.$emit(customEvents.canvasTools.CloseAllWhiteBoardControls, options);
+      const canvasObject = options.target;
       if (canvasObject !== null) {
         if (canvasObject.whitebirdData !== undefined) {
-          if (canvasObject.whitebirdData.type === 'StickyNote' ||
-            canvasObject.whitebirdData.type === 'textboxGroup' ||
-            (canvasObject.type === 'textbox' &&
-            canvasObject.whitebirdData.type !== 'StickyNoteTextBox')
-          ) {
-            this.containers.pop()
-            this.createStickyToolBox(canvasObject)
+          if (canvasObject.whitebirdData.type === 'StickyNote' || (canvasObject.type === 'textbox' && canvasObject.whitebirdData.type !== 'StickyNoteTextBox')) {
+            this.containers.pop();
+            this.createStickyToolBox(canvasObject);
           }
         }
       } else {
-        this.containers.pop()
+        this.containers.pop();
       }
-    })
-
+    });
     /** callback for sticky notes and textbox */
     const canvasModifiedCallback = (options) => {
-      const canvasObject = options.target
-      this.containers.pop()
+      const canvasObject = options.target;
+      this.containers.pop();
       if (canvasObject.whitebirdData !== undefined) {
-        if (canvasObject.whitebirdData.type === 'StickyNote' ||
-          canvasObject.whitebirdData.type === 'textboxGroup' ||
-          canvasObject.type === 'textbox') 
-        {
-          this.createStickyToolBox(canvasObject)
+        if (canvasObject.whitebirdData.type === 'StickyNote' || canvasObject.type === 'textbox') {
+          this.createStickyToolBox(canvasObject);
         }
       }
-    }
+    };
 
     const canvasModifyingCallback = (options) => {
-      const canvasObject = options.target
+      const canvasObject = options.target;
       if (canvasObject.whitebirdData !== undefined) {
-        if (canvasObject.whitebirdData.type === 'StickyNote' ||
-          canvasObject.whitebirdData.type === 'textboxGroup' ||
-          canvasObject.type === 'textbox')
-        {
-          this.containers.pop()
+        if (canvasObject.whitebirdData.type === 'StickyNote' || canvasObject.type === 'textbox') {
+          this.containers.pop();
         }
       }
-    }
+    };
 
     /** Object FINISHED changing */
     this.canvas.on('object:moved', canvasModifiedCallback);
@@ -378,18 +220,15 @@ export default {
     });
 
     this.$nuxt.$on(customEvents.canvasTools.sendCustomModified, (options) => {
-      const canvasObject = options
+      const canvasObject = options;
       if (canvasObject.whitebirdData !== undefined) {
         if (canvasObject.whitebirdData.tempObject !== true) {
-          canvasObject.whitebirdData.persistedOnServer = false
-          logger.log('object:CustomModified')
-          this.updateObject(canvasObject)
-
-          // Only display the font setting widget if the object is being edited.
-          this.editingText = !this.editingText
+          canvasObject.whitebirdData.persistedOnServer = false;
+          logger.log('object:CustomModified');
+          this.updateObject(canvasObject);
         }
       }
-    })
+    });
 
     this.canvas.on('object:removed', (options) => {
       const canvasObject = options.target;
@@ -399,10 +238,8 @@ export default {
           logger.log('object:removed');
           this.removeObject(canvasObject);
         }
-        if (canvasObject.whitebirdData.type === 'StickyNote' ||
-          canvasObject.whitebirdData.type === 'textboxGroup' ||
-          canvasObject.type === 'textbox') {
-          this.containers.pop()
+        if (canvasObject.whitebirdData.type === 'StickyNote' || canvasObject.type === 'textbox') {
+          this.containers.pop();
         }
       }
     });
@@ -410,8 +247,8 @@ export default {
     this.$nuxt.$on(customEvents.canvasTools.enliven, (payload) => {
       this.createObjectsFromJSON(payload);
     });
-    this.$nuxt.$on(customEvents.canvasTools.deletedObjectFromServer, (payload) => {
-      this.deletedObjectFromServer(payload);
+    this.$nuxt.$on(customEvents.canvasTools.deletedObejctFromServer, (payload) => {
+      this.deletedObejctFromServer(payload);
     });
     this.$nuxt.$on(customEvents.canvasTools.updateObjectFromServer, (payload) => {
       this.updateObjectFromServer(payload);
@@ -524,7 +361,7 @@ export default {
       this.canvas.renderAll();
     },
 
-    deletedObjectFromServer(canvasObject) {
+    deletedObejctFromServer(canvasObject) {
       logger.log('Canvas delete!');
       this.canvas.getObjects().forEach((obj) => {
         if (obj.whitebirdData.id === canvasObject.whitebirdData.id) { this.canvas.remove(obj); }
@@ -552,8 +389,7 @@ export default {
     createStickyToolBox(obj) {
       let ObjectFont = 'Arial';
       let ObjectFontStyle = 'normal';
-      if (obj.whitebirdData.type === 'StickyNote' ||
-        obj.whitebirdData.type === 'textboxGroup') {
+      if (obj.whitebirdData.type === 'StickyNote') {
         if (obj.item(1) === undefined) {
           // console.log('obj.item(1) undefinde')
         } else {
@@ -572,9 +408,9 @@ export default {
         fontstyles: ['italic', 'bold', 'normal'],
         objectFont: ObjectFont,
         objectFontStyle: ObjectFontStyle,
-      }
 
-      this.containers.push(newContainer)
+      };
+      this.containers.push(newContainer);
     },
 
     addDragAndDrop() {
@@ -635,48 +471,8 @@ export default {
       if (e.preventDefault) { e.preventDefault(); }
       return false;
     },
-    renderIcon(icon) {
-      return (ctx, left, top, styleOverride, fabricObject) => {
-        var size = this.cornerSize
-        ctx.save()
-        ctx.translate(left, top)
-        ctx.rotate(fabric.util.degreesToRadians(fabricObject.angle))
-        ctx.drawImage(icon, -size/2, -size/2, size, size)
-        ctx.restore()
-      }
-    },
-    deleteObject() {
-      this.$nuxt.$emit(customEvents.canvasTools.removeObject)
-	  },
-    bringObjectToFront() {
-      this.$nuxt.$emit(customEvents.canvasTools.bringObjectToFront)
-    },
-    bringObjectForward() {
-      this.$nuxt.$emit(customEvents.canvasTools.bringObjectForward)
-    },
-    sendObjectToBack() {
-      this.$nuxt.$emit(customEvents.canvasTools.sendObjectToBack)
-    },
-    sendObjectBackwards() {
-      this.$nuxt.$emit(customEvents.canvasTools.sendObjectBackwards)
-    },
-    pinObject() {
-      this.$nuxt.$emit(customEvents.canvasTools.pinObject)
-    },
-    unPinObject() {
-      this.$nuxt.$emit(customEvents.canvasTools.unPinObject)
-    },
-    cloneObject(eventData, transform) {
-      var target = transform.target
-      var canvas = target.canvas
-      target.clone((cloned) => {
-        cloned.left += 10
-        cloned.top += 10
-        canvas.add(cloned)
-      })
-    },
   },
-}
+};
 
 </script>
 

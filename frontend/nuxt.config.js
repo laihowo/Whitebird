@@ -1,7 +1,7 @@
 /* eslint-disable no-template-curly-in-string */
 export default {
   server: {
-    port: process.env.PORT || 8080, // default: 3000
+    // port: 3000, // default: 3000
     // host: 0.0.0.0, // default: localhost
   },
 
@@ -100,7 +100,6 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-    baseURL: process.env.API_URL,
     retry: { retries: 3 },
   },
   // Build Configuration (https://go.nuxtjs.dev/config-build)
@@ -115,14 +114,12 @@ export default {
    */
   publicRuntimeConfig: {
     axios: {
-      baseURL: process.env.API_URL,
       retry: { retries: 3 },
     },
   },
 
   privateRuntimeConfig: {
     axios: {
-      baseURL: process.env.API_URL,
       retry: { retries: 3 },
     },
   },

@@ -111,7 +111,7 @@
             </li>
 
             <!-- Eraser -->
-            <li id="toolbar-item-eraser" class="tools--item" style="display: none">
+            <li id="toolbar-item-eraser" class="tools--item" style="display:none">
               <div class="tools--item--button">
                 <i class="fas fa-eraser"></i>
               </div>
@@ -250,92 +250,20 @@
               </div>
             </li>
 
-            <!-- Pin -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              v-if="isPinned"
-              @click="unPinObject()">
-              <div class="tools--item--button">
-                <i class="fas fa-unlock"></i>
-              </div>
-            </li> -->
-
-            <!-- Unpin -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              v-else
-              @click="pinObject()">
-              <div class="tools--item--button">
-                <i class="fas fa-lock"></i>
-              </div>
-            </li> -->
-
-            <!-- Bring Object To Front -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="bringObjectToFront()">
-              <div class="tools--item--button">
-                <i class="fas fa-angle-double-right"></i>
-              </div>
-            </li> -->
-
-            <!-- Bring Object Forward -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="bringObjectForward()">
-              <div class="tools--item--button">
-                <i class="fas fa-angle-right"></i>
-              </div>
-            </li> -->
-
-            <!-- Send Object To Back -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="sendObjectToBack()">
-              <div class="tools--item--button">
-                <i class="fas fa-angle-double-left"></i>
-              </div>
-            </li> -->
-
-            <!-- Send Object Backwards -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="sendObjectBackwards()">
-              <div class="tools--item--button">
-                <i class="fas fa-angle-left"></i>
-              </div>
-            </li> -->
-
-            <!-- Delete Object -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="removeObject()">
-              <div class="tools--item--button">
-                <i class="fas fa-trash"></i>
-              </div>
-            </li> -->
-
-            <!-- Undo -->
-            <li id="toolbar-item-redo" class="tools--item">
-              <div class="tools--item--button" @click="undo()">
-                <i class="fas fa-undo"></i>
-              </div>
-            </li>
-
-            <!-- Redo -->
-            <li id="toolbar-item-redo" class="tools--item">
-              <div class="tools--item--button" @click="redo()">
-                <i class="fas fa-redo"></i>
-              </div>
-            </li>
-
             <!-- Background -->
             <li id="toolbar-item-text" class="tools--item">
               <div class="tools--item--button" @click="swapBackground">
                 <i class="fas fa-border-all"></i>
               </div>
             </li>
-           
+
+            <!-- Redo: Function not implemented -->
+            <!--<li id="toolbar-item-redo" class="tools--item">
+              <div class="tools--item--button">
+                <i class="fas fa-undo"></i>
+              </div>
+            </li>
+            -->
           </ul>
         </div>
       </div>
@@ -359,7 +287,7 @@
     </div>
 
     <!-- Whiteboard Join code -->
-    <div v-if="canvasID" class="toolbar-box-bottom-right">
+    <div v-if="canvasID" class="toolbar-box-bottom-left">
       <div class="card">
         <div class="card-content">
           <p>{{ canvasID }}</p>
@@ -414,7 +342,6 @@ export default {
       showInviteModal: false,
       isFullScreen: false,
       indexB: 0,
-      isPinned: false,
     };
   },
   computed: {
@@ -605,35 +532,6 @@ export default {
       const element = states[this.indexB];
       this.$nuxt.$emit('imageBackgroundChanged', element);
       this.indexB += 1;
-    },
-    pinObject() {
-      this.isPinned = true
-      this.$nuxt.$emit(customEvents.canvasTools.pinObject)
-    },
-    unPinObject() {
-      this.isPinned = false
-      this.$nuxt.$emit(customEvents.canvasTools.unPinObject)
-    },
-    bringObjectToFront() {
-      this.$nuxt.$emit(customEvents.canvasTools.bringObjectToFront)
-    },
-    bringObjectForward() {
-      this.$nuxt.$emit(customEvents.canvasTools.bringObjectForward)
-    },
-    sendObjectToBack() {
-      this.$nuxt.$emit(customEvents.canvasTools.sendObjectToBack)
-    },
-    sendObjectBackwards() {
-      this.$nuxt.$emit(customEvents.canvasTools.sendObjectBackwards)
-    },
-    removeObject() {
-      this.$nuxt.$emit(customEvents.canvasTools.removeObject)
-    },
-    undo() {
-      this.$nuxt.$emit(customEvents.canvasTools.undo)
-    },
-    redo() {
-      this.$nuxt.$emit(customEvents.canvasTools.redo)
     },
   },
 };

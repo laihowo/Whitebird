@@ -184,41 +184,38 @@ export default {
       });
       textBox.width = maxLineTextWidth;
 
-      if (group.item) {
-        // Automatic change of the FontSize
-        const maxfixedWidth = group.item(0).width - 20;
-        const maxfixedHeight = group.item(0).height - 20;
-        const maxfontSize = group.item(0).height - 20;
+      // Automatic change of the FontSize
+      const maxfixedWidth = group.item(0).width - 20;
+      const maxfixedHeight = group.item(0).height - 20;
+      const maxfontSize = group.item(0).height - 20;
 
-        let newfontSize = textBox.fontSize;
-        // if the text width is too long or too short
-        newfontSize *= maxfixedWidth / (textBox.width + 1);
-        if (newfontSize > maxfontSize) {
-          newfontSize = maxfontSize;
-          textBox.set({ fontSize: maxfontSize });
-        } else {
-          textBox.set({ fontSize: newfontSize });
-        }
-        textBox.width = maxfixedWidth;
-
-        // if the text height is too long or too short
-        while (textBox.height > maxfixedHeight) {
-          const scale = textBox.height / maxfixedHeight;
-          if (textBox.fontSize > maxfontSize) {
-            textBox.fontSize = maxfontSize;
-          }
-          if (scale >= 4) {
-            newfontSize -= scale;
-          } else if (scale < 4 && scale >= 1) {
-            newfontSize -= 4;
-          } else {
-            newfontSize -= 1;
-          }
-
-          textBox.set({ fontSize: newfontSize });
-        }
+      let newfontSize = textBox.fontSize;
+      // if the text width is too long or too short
+      newfontSize *= maxfixedWidth / (textBox.width + 1);
+      if (newfontSize > maxfontSize) {
+        newfontSize = maxfontSize;
+        textBox.set({ fontSize: maxfontSize });
+      } else {
+        textBox.set({ fontSize: newfontSize });
       }
+      textBox.width = maxfixedWidth;
 
+      // if the text height is too long or too short
+      while (textBox.height > maxfixedHeight) {
+        const scale = textBox.height / maxfixedHeight;
+        if (textBox.fontSize > maxfontSize) {
+          textBox.fontSize = maxfontSize;
+        }
+        if (scale >= 4) {
+          newfontSize -= scale;
+        } else if (scale < 4 && scale >= 1) {
+          newfontSize -= 4;
+        } else {
+          newfontSize -= 1;
+        }
+
+        textBox.set({ fontSize: newfontSize });
+      }
       this.canvas.renderAll();
     },
 
