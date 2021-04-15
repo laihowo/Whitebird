@@ -631,7 +631,15 @@ export default {
 
       // Responsive layout for the full screen mode.
       document.querySelector('.toolbar--box--top-left').style.visibility = 'hidden'
-      document.querySelector('.toolbar-box-middle-left').style.marginTop = '10px'
+      // document.querySelector('.toolbar-box-middle-left').style.marginTop = '10px'
+
+      // Reserve space for the exit full screen button on iPad Safari.
+      var isSafari = navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)
+      var iOS = /iPad/.test(navigator.userAgent) && !window.MSStream
+
+      if (!(isSafari && iOS)) {
+        document.querySelector('.toolbar-box-middle-left').style.marginTop = '10px'
+      }
     },
     compressScreen() {
       this.isFullScreen = false
