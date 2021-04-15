@@ -679,9 +679,17 @@ export default {
     panCanvas() {
       this.isPanning = !this.isPanning
       this.$nuxt.$emit(customEvents.canvasTools.pan, this.isPanning)
+
+      // Hide the drawing tool bar in the panning mode.
+      var drawingToolbar = document.querySelector('.toolbar-box-middle-left')
+      if (this.isPanning) {
+        drawingToolbar.style.visibility = 'hidden'
+      } else {
+        drawingToolbar.style.visibility = 'visible'
+      }
     },
   },
-};
+}
 </script>
 
 <style scoped>
