@@ -474,7 +474,7 @@ export default {
     });
 
     var roomNameLengthLimit = 20
-    var iOS = /iPhone|iPad|Intel Mac/.test(navigator.userAgent) && !window.MSStream
+    var iOS = /iPhone|iPod|iPad|Intel Mac/.test(navigator.userAgent) && !window.MSStream
 
     // Set room name length limit on iOS.
     if (iOS) {
