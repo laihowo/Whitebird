@@ -275,18 +275,18 @@
             </li>
 
             <!-- Undo -->
-            <li id="toolbar-item-redo" class="tools--item">
+            <!-- <li id="toolbar-item-redo" class="tools--item">
               <div class="tools--item--button" @click="undo()">
                 <i class="fas fa-undo"></i>
               </div>
-            </li>
+            </li> -->
 
             <!-- Redo -->
-            <li id="toolbar-item-redo" class="tools--item">
+            <!-- <li id="toolbar-item-redo" class="tools--item">
               <div class="tools--item--button" @click="redo()">
                 <i class="fas fa-redo"></i>
               </div>
-            </li>
+            </li> -->
            
           </ul>
         </div>
@@ -330,6 +330,20 @@
       <div class="toolbar-box-mini-left mt-5">
         <div class="toolbar toolbar--vertical">
           <ul class="tools--menu">
+            <!-- Undo -->
+            <li id="toolbar-item-redo" class="tools--item">
+              <div class="tools--item--button" @click="undo()">
+                <i class="fas fa-undo"></i>
+              </div>
+            </li>
+
+            <!-- Redo -->
+            <li id="toolbar-item-redo" class="tools--item">
+              <div class="tools--item--button" @click="redo()">
+                <i class="fas fa-redo"></i>
+              </div>
+            </li>
+
             <!-- Pan -->
             <li class="tools--item">
               <div class="tools--item--button" @click="panCanvas()">
@@ -459,13 +473,13 @@ export default {
       this.isStickyNotesSelected = false;
     });
 
+    var roomNameLengthLimit = 20
     // Set room name length limit according to the screen size.
-    var roomNameLengthLimit
-    if (screen.width <= 600) {
-      roomNameLengthLimit = 15
-    } else {
-      roomNameLengthLimit = 20
-    }
+    // if (screen.width <= 600) {
+    //   roomNameLengthLimit = 15
+    // } else {
+    //   roomNameLengthLimit = 20
+    // }
 
     if (this.roomName.length > roomNameLengthLimit) {
       this.roomName = this.roomName.substr(0, roomNameLengthLimit) + '...'
@@ -604,25 +618,35 @@ export default {
       this.colorPickedArr.push(color);
     },
     expandScreen() {
-      this.isFullScreen = true;
-      const elem = document.documentElement;
+      this.isFullScreen = true
+      const elem = document.documentElement
+
       if (elem.requestFullscreen) {
-        elem.requestFullscreen();
+        elem.requestFullscreen()
       } else if (elem.webkitRequestFullscreen) { /* Safari */
-        elem.webkitRequestFullscreen();
+        elem.webkitRequestFullscreen()
       } else if (elem.msRequestFullscreen) { /* IE11 */
-        elem.msRequestFullscreen();
+        elem.msRequestFullscreen()
       }
+
+      // Responsive layout for the full screen mode.
+      document.querySelector('.toolbar--box--top-left').style.visibility = 'hidden'
+      document.querySelector('.toolbar-box-middle-left').style.marginTop = '10px'
     },
     compressScreen() {
-      this.isFullScreen = false;
+      this.isFullScreen = false
+
       if (document.exitFullscreen) {
-        document.exitFullscreen();
+        document.exitFullscreen()
       } else if (document.webkitExitFullscreen) { /* Safari */
-        document.webkitExitFullscreen();
+        document.webkitExitFullscreen()
       } else if (document.msExitFullscreen) { /* IE11 */
-        document.msExitFullscreen();
+        document.msExitFullscreen()
       }
+
+      // Restore to the original layout.
+      document.querySelector('.toolbar--box--top-left').style.visibility = 'visible'
+      document.querySelector('.toolbar-box-middle-left').style.marginTop = '70px'
     },
     swapBackground() {
       if (this.indexB === 3) {
