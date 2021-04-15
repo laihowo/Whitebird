@@ -635,7 +635,7 @@ export default {
 
       // Reserve space for the exit full screen button on iPad Safari.
       var isSafari = navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)
-      var iOS = /iPad/.test(navigator.userAgent) && !window.MSStream
+      var iOS = /iPad|Intel Mac/.test(navigator.userAgent) && !window.MSStream
 
       if (!(isSafari && iOS)) {
         document.querySelector('.toolbar-box-middle-left').style.marginTop = '10px'
