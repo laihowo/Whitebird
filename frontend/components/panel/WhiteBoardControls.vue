@@ -474,11 +474,16 @@ export default {
     });
 
     var roomNameLengthLimit = 20
-    // Set room name length limit according to the screen size.
+    var iOS = /iPhone|iPad|Intel Mac/.test(navigator.userAgent) && !window.MSStream
+
+    // Set room name length limit on iOS.
+    if (iOS) {
+      roomNameLengthLimit = 15
+    }
+
+    // Set room name length limit on small screen size.
     // if (screen.width <= 600) {
     //   roomNameLengthLimit = 15
-    // } else {
-    //   roomNameLengthLimit = 20
     // }
 
     if (this.roomName.length > roomNameLengthLimit) {
@@ -634,10 +639,10 @@ export default {
       // document.querySelector('.toolbar-box-middle-left').style.marginTop = '10px'
 
       // Reserve space for the exit full screen button on iPad Safari.
+      var iPad = /iPad|Intel Mac/.test(navigator.userAgent) && !window.MSStream
       var isSafari = navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)
-      var iOS = /iPad|Intel Mac/.test(navigator.userAgent) && !window.MSStream
 
-      if (!(isSafari && iOS)) {
+      if (!(iPad && isSafari)) {
         document.querySelector('.toolbar-box-middle-left').style.marginTop = '10px'
       }
     },
