@@ -292,8 +292,8 @@ export default {
         });
 
         const group = new fabric.Group([SVGObject, text], {
-          scaleX: 0.5,
-          scaleY: 0.5,
+          scaleX: 0.3,
+          scaleY: 0.3,
           selectable: true,
           evented: true,
           whitebirdData: {
