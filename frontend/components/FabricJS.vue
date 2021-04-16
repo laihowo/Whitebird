@@ -388,20 +388,22 @@ export default {
       options.e.preventDefault()
       options.e.stopPropagation()
       /*
+      var sideLength = 500
       var vpt = this.canvas.viewportTransform
-      if (zoom < 400 / 1000) {
-        vpt[4] = 200 - 1000 * zoom / 2
-        vpt[5] = 200 - 1000 * zoom / 2
+
+      if (zoom < 400 / sideLength) {
+        vpt[4] = 200 - sideLength * zoom / 2
+        vpt[5] = 200 - sideLength * zoom / 2
       } else {
         if (vpt[4] >= 0) {
           vpt[4] = 0
-        } else if (vpt[4] < this.canvas.getWidth() - 1000 * zoom) {
-          vpt[4] = this.canvas.getWidth() - 1000 * zoom
+        } else if (vpt[4] < this.canvas.getWidth() - sideLength * zoom) {
+          vpt[4] = this.canvas.getWidth() - sideLength * zoom
         }
         if (vpt[5] >= 0) {
           vpt[5] = 0
-        } else if (vpt[5] < this.canvas.getHeight() - 1000 * zoom) {
-          vpt[5] = this.canvas.getHeight() - 1000 * zoom
+        } else if (vpt[5] < this.canvas.getHeight() - sideLength * zoom) {
+          vpt[5] = this.canvas.getHeight() - sideLength * zoom
         }
       }
       */

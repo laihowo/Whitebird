@@ -249,15 +249,25 @@ export default {
 
     createStickyNote(payload) {
       fabric.loadSVGFromURL(this.getStickyNote(payload.color), (objects, options) => {
-        const SVGObject = fabric.util.groupSVGElements(objects, options);
+        const SVGObject = fabric.util.groupSVGElements(objects, options)
         SVGObject.whitebirdData = {
           id: v4(),
           type: 'StickyNote',
-        };
+        }
+
+        // Restore to the default zoom level.
+        this.canvas.setZoom(1)
+        
+        // Calculate the initial position according to the view port.
+        var topLeftPos = this.canvas.calcViewportBoundaries().tl
+        var offset = 100
+
+        var initLeft = topLeftPos.x + offset
+        var initTop = topLeftPos.y + offset
 
         const text = new fabric.Textbox('Text', {
-          left: 100,
-          top: 100,
+          left: initLeft,
+          top: initTop,
           width: SVGObject.width - 20,
           fontSize: 166.6,
           lockScalingY: true,
@@ -269,7 +279,7 @@ export default {
             tempObject: true,
             type: 'StickyNoteTextBox',
           },
-        });
+        })
 
         if (payload.color === '#000000') {
           text.set({ fill: 'rgb(255,255,255)' });

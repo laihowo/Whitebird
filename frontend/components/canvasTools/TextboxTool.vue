@@ -197,9 +197,19 @@ export default {
         },
       })
 
+      // Restore to the default zoom level.
+      this.canvas.setZoom(1)
+      
+      // Calculate the initial position according to the view port.
+      var topLeftPos = this.canvas.calcViewportBoundaries().tl
+      var offset = 100
+
+      var initLeft = topLeftPos.x + offset
+      var initTop = topLeftPos.y + offset
+
       const tbox = new fabric.Textbox('hello world', {
-        left: 100,
-        top: 100,
+        left: initLeft,
+        top: initTop,
         width: 150,
         fill: 'rgb(0, 0, 0)',
         fontFamily: 'Arial',
