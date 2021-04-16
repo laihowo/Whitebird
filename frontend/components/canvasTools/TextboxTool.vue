@@ -210,7 +210,7 @@ export default {
       const tbox = new fabric.Textbox('hello world', {
         left: initLeft,
         top: initTop,
-        width: 150,
+        width: 50,
         fill: 'rgb(0, 0, 0)',
         fontFamily: 'Arial',
         whitebirdData: {
@@ -230,8 +230,8 @@ export default {
       })
 
       const group = new fabric.Group([rectangle, tbox], {
-        scaleX: 2,
-        scaleY: 2,
+        scaleX: 1,
+        scaleY: 1,
         selectable: true,
         evented: true,
         whitebirdData: {

@@ -44,7 +44,7 @@ export default {
       const circle = new fabric.Circle({
         left: initLeft,
         top: initTop,
-        radius: 25,
+        radius: 60,
         stroke: options.stroke,
         fill: options.fill,
         whitebirdData: { id: v4() },

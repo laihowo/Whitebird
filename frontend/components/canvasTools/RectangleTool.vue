@@ -34,8 +34,8 @@ export default {
       const rect = new fabric.Rect({
         left: initLeft,
         top: initTop,
-        width: 50,
-        height: 50,
+        width: 120,
+        height: 120,
         stroke: options.stroke,
         fill: options.fill,
         whitebirdData: { id: v4() },
