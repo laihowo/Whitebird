@@ -32,6 +32,7 @@
       v-on:sendBackwards-img="sendBackwardsImg = $event"
       v-on:pin-img="pinImg = $event"
       v-on:unPin-img="unPinImg = $event"
+      v-on:edit-img="editImg = $event"
       v-on:clone-img="cloneImg = $event"></ControlIcon>
   </div>
 </template>
@@ -86,6 +87,7 @@ export default {
       sendBackwardsImg: null,
       pinImg: null,
       unPinImg: null,
+      editImg: null,
       cloneImg: null,
       cornerSize: 24,
       pausePanning: true,
@@ -189,6 +191,19 @@ export default {
       render: this.renderIcon(this.unPinImg),
       cornerSize: this.cornerSize,
       visible: false,
+    })
+
+    // Drawing edit icon
+    fabric.Object.prototype.controls.edit = new fabric.Control({
+      x: 1,
+      y: 0,
+      offsetX: -16,
+      offsetY: -16,
+      cursorStyle: 'pointer',
+      mouseUpHandler: this.unPinObject,
+      render: this.renderIcon(this.editImg),
+      cornerSize: this.cornerSize,
+      visible: true,
     })
 
     // Drawing clone icon
