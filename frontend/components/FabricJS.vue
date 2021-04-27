@@ -200,7 +200,7 @@ export default {
       offsetX: -16,
       offsetY: -16,
       cursorStyle: 'pointer',
-      mouseUpHandler: this.unPinObject,
+      mouseUpHandler: this.editObject,
       render: this.renderIcon(this.editImg),
       cornerSize: this.cornerSize,
       visible: true,
@@ -822,6 +822,9 @@ export default {
     },
     unPinObject() {
       this.$nuxt.$emit(customEvents.canvasTools.unPinObject)
+    },
+    editObject() {
+      this.$nuxt.$emit(customEvents.canvasTools.editObject)
     },
     cloneObject(eventData, transform) {
       var target = transform.target
