@@ -72,23 +72,6 @@
       <ShareWhiteboardModal :show="showInviteModal" @update-modal="closeModal" />
     </div>
 
-    <!-- <div class="left-horizontal">
-      <ul class="">
-        
-        <li class="">
-          <div class="" @click="toggleMousePointerToolbox">
-            <i class="fas fa-mouse-pointer"></i>
-          </div>
-        </li>
-
-        <li class="">
-          <div class="" @click="toggleMousePointerToolbox">
-            <i class="fas fa-mouse-pointer"></i>
-          </div>
-        </li>
-      </ul>
-    </div> -->
-
     <div class="toolbar-box-middle-left is-flex-direction-column">
       <!-- Toolbar middle Left with primary actions -->
       <div>
@@ -687,6 +670,9 @@ export default {
       } else {
         drawingToolbar.style.visibility = 'visible'
       }
+
+      // Switch to the pointer mode.
+      this.toggleMousePointerToolbox()
     },
   },
 }
