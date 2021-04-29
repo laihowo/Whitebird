@@ -90,36 +90,39 @@ export default {
         group.setControlVisible(side, false)
       })
 
-      this.$nuxt.$on(customEvents.canvasTools.editObject, () => {
-      // group.on('mousedblclick', () => {
-        group.set({
-          selectable: false,
-          evented: false,
-        })
-        this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group)
-        this.$nuxt.$emit(
-          customEvents.canvasTools.setRemoveObjectEventListener,
-          false,
-        )
-        this.editingText = true
-        this.groupObject = group
+      this.$nuxt.$on(customEvents.canvasTools.editObject, (objGroup) => {
+      // group.on('mousedblclick', (objType) => {
+        if (objGroup.whitebirdData.type == group.whitebirdData.type) {
+          group.set({
+            selectable: false,
+            evented: false,
+          })
+          this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group)
+          this.$nuxt.$emit(
+            customEvents.canvasTools.setRemoveObjectEventListener,
+            false,
+          )
+          this.editingText = true
+          this.groupObject = group
 
-        // declare the textBox Variables
-        // ! The scaling must be multiplied by the scaling of the group.
-        // ! If not, the text box has a different size.
-        // the left and upper sides of the individual objects
-        // are indicated relative to the group centre.
-        this.textBox = group.item(1)
-        this.textBox.scaleX *= group.scaleX
-        this.textBox.scaleY *= group.scaleY
-        this.textBox.left = group.left + (10 * this.textBox.scaleX)
-        this.textBox.top = group.top + (10 * this.textBox.scaleY)
+          // declare the textBox Variables
+          // ! The scaling must be multiplied by the scaling of the group.
+          // ! If not, the text box has a different size.
+          // the left and upper sides of the individual objects
+          // are indicated relative to the group centre.
+          console.log(objGroup.scaleX)
+          this.textBox = objGroup.item(1)
+          this.textBox.scaleX *= objGroup.scaleX
+          this.textBox.scaleY *= objGroup.scaleY
+          this.textBox.left = objGroup.left + (10 * this.textBox.scaleX)
+          this.textBox.top = objGroup.top + (10 * this.textBox.scaleY)
 
-        group.remove(group.item(1))
-        this.canvas.add(this.textBox).setActiveObject(this.textBox)
-        this.textBox.enterEditing()
+          objGroup.remove(objGroup.item(1))
+          this.canvas.add(this.textBox).setActiveObject(this.textBox)
+          this.textBox.enterEditing()
 
-        this.canvas.renderAll()
+          this.canvas.renderAll()
+        }
       })
     },
     addTextBoxSettings(textBox, group) {
