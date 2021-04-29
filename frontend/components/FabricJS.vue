@@ -397,6 +397,7 @@ export default {
         x: options.e.offsetX,
         y: options.e.offsetY,
       }, zoom)
+
       options.e.preventDefault()
       options.e.stopPropagation()
     })
@@ -414,6 +415,9 @@ export default {
             var delta = this.canvas.zoomStartScale * e.self.scale
             this.canvas.zoomToPoint(point, delta)
           }
+          // Prevent
+          e.preventDefault()
+          e.stopPropagation()
       },
       'object:selected': () => {
 
