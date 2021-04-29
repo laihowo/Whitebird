@@ -91,10 +91,7 @@ export default {
       })
 
       this.$nuxt.$on(customEvents.canvasTools.editObject, () => {
-        console.log('editing...')
-      })
-
-      group.on('mousedblclick', () => {
+      // group.on('mousedblclick', () => {
         group.set({
           selectable: false,
           evented: false,

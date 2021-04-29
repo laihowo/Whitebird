@@ -120,7 +120,8 @@ export default {
         group.setControlVisible(side, false);
       });
 
-      group.on('mousedblclick', () => {
+      this.$nuxt.$on(customEvents.canvasTools.editObject, () => {
+      // group.on('mousedblclick', () => {
         group.set({
           selectable: false,
           evented: false,

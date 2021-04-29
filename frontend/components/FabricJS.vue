@@ -337,19 +337,17 @@ export default {
         this.containers.pop()
       }
 
-      // Press alt key to trigger the pan.
+      // Press the pan button to trigger the pan.
       var e = options.e
       if (this.pan == true) {
         this.canvas.isDragging = true
         this.canvas.selection = false
 
-        // console.log(e.touches.length)
         var touches = e.touches
         if (touches && touches.length >= 1) {
           this.canvas.lastPosX = touches[0].clientX
           this.canvas.lastPosY = touches[0].clientY
         } else if (e.clientX) {
-        // if (e.clientX) {
           this.canvas.lastPosX = e.clientX
           this.canvas.lastPosY = e.clientY
         }
@@ -369,7 +367,6 @@ export default {
           this.canvas.lastPosX = touches[0].clientX
           this.canvas.lastPosY = touches[0].clientY
         } else if (e.clientX) {
-        // if (e.clientX) {
           vpt[4] += e.clientX - this.canvas.lastPosX
           vpt[5] += e.clientY - this.canvas.lastPosY
           this.canvas.lastPosX = e.clientX
@@ -402,33 +399,12 @@ export default {
       }, zoom)
       options.e.preventDefault()
       options.e.stopPropagation()
-      /*
-      var sideLength = 500
-      var vpt = this.canvas.viewportTransform
-
-      if (zoom < 400 / sideLength) {
-        vpt[4] = 200 - sideLength * zoom / 2
-        vpt[5] = 200 - sideLength * zoom / 2
-      } else {
-        if (vpt[4] >= 0) {
-          vpt[4] = 0
-        } else if (vpt[4] < this.canvas.getWidth() - sideLength * zoom) {
-          vpt[4] = this.canvas.getWidth() - sideLength * zoom
-        }
-        if (vpt[5] >= 0) {
-          vpt[5] = 0
-        } else if (vpt[5] < this.canvas.getHeight() - sideLength * zoom) {
-          vpt[5] = this.canvas.getHeight() - sideLength * zoom
-        }
-      }
-      */
     })
 
     this.canvas.on({
-      // Use touch gesture to pan and zoom canvas.
+      // Use touch gesture to zoom canvas.
       'touch:gesture': (e) => {
           if (e.e.touches && e.e.touches.length == 2) {
-            // this.pausePanning = true
             this.canvas.selection = false
 
             var point = new fabric.Point(e.self.x, e.self.y)
@@ -437,32 +413,13 @@ export default {
             }
             var delta = this.canvas.zoomStartScale * e.self.scale
             this.canvas.zoomToPoint(point, delta)
-
-            // this.pausePanning = false
           }
       },
       'object:selected': () => {
-          // this.pausePanning = true
+
       },
       'touch:drag': (e) => {
-        /*
-        if (this.pausePanning == false && undefined != e.self.x && undefined != e.self.y) {
-          this.canvas.currentX = e.self.x
-          this.canvas.currentY = e.self.y
-          this.canvas.xChange = this.canvas.currentX - this.canvas.lastX
-          this.canvas.yChange = this.canvas.currentY - this.canvas.lastY
 
-          if ((Math.abs(this.canvas.currentX - this.canvas.lastX) <= 50) &&
-            (Math.abs(this.canvas.currentY - this.canvas.lastY) <= 50))
-          {
-            var delta = new fabric.Point(this.canvas.xChange, this.canvas.yChange)
-            this.canvas.relativePan(delta)
-          }
-
-          this.canvas.lastX = e.self.x
-          this.canvas.lastY = e.self.y
-        }
-        */
       },
     })
 
