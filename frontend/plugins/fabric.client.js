@@ -1,4 +1,4 @@
 import Vue from 'vue'
-import { fabric } from 'fabric'
+import { fabric } from 'fabric-with-gestures'
 
 Vue.use(fabric)

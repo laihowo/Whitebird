@@ -403,23 +403,24 @@ export default {
     })
 
     this.canvas.on({
-      // Use touch gesture to zoom canvas.
+      // Use the pinch gesture to zoom canvas only if no object is selected.
       'touch:gesture': (e) => {
-          if (e.e.touches && e.e.touches.length == 2) {
-            this.canvas.selection = false
+        var obj = this.canvas.getActiveObjects()
+        
+        if (e.e.touches && e.e.touches.length == 2
+          && obj.length == 0)
+        {
+          this.canvas.selection = false
 
-            var point = new fabric.Point(e.self.x, e.self.y)
-            if (e.self.state == "start") {
-              this.canvas.zoomStartScale = this.canvas.getZoom()
-            }
-            var delta = this.canvas.zoomStartScale * e.self.scale
-            this.canvas.zoomToPoint(point, delta)
+          var point = new fabric.Point(e.self.x, e.self.y)
+          if (e.self.state == "start") {
+            this.canvas.zoomStartScale = this.canvas.getZoom()
           }
-          // Prevent
-          e.preventDefault()
-          e.stopPropagation()
+          var delta = this.canvas.zoomStartScale * e.self.scale
+          this.canvas.zoomToPoint(point, delta)
+        }
       },
-      'object:selected': () => {
+      'object:selected': (e) => {
 
       },
       'touch:drag': (e) => {
