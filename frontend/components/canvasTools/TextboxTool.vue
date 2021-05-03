@@ -39,6 +39,7 @@ export default {
     })
 
     this.$nuxt.$on(customEvents.canvasTools.editObject, (group) => {
+      if (group.whitebirdData.type == 'textboxGroup') {
       group.set({
         selectable: false,
         evented: false,
@@ -67,6 +68,7 @@ export default {
       this.textBox.enterEditing()
 
       this.canvas.renderAll()
+      }
     })
 
     // example registering a custom doubletap event.

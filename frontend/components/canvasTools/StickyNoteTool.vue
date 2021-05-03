@@ -68,9 +68,9 @@ export default {
       }
     });
 
-    /*
+  
     this.$nuxt.$on(customEvents.canvasTools.editObject, (group) => {
-      if (false) {
+      if (group.whitebirdData.type == 'StickyNote') {
         group.set({
           selectable: false,
           evented: false,
@@ -101,7 +101,7 @@ export default {
         this.canvas.renderAll();
       }
     })
-    */
+
   },
   methods: {
     /*
