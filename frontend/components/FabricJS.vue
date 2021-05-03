@@ -203,7 +203,7 @@ export default {
       mouseUpHandler: this.editObject,
       render: this.renderIcon(this.editImg),
       cornerSize: this.cornerSize,
-      visible: false,
+      visible: true,
     })
 
     // Drawing clone icon
@@ -788,8 +788,9 @@ export default {
     editObject() {
       var obj = this.canvas.getActiveObjects()
       if (obj.length == 1) {
-        this.$nuxt.$emit(customEvents.canvasTools.editObject,
-          obj[0])
+        this.canvas.fire('editObject')
+        // this.$nuxt.$emit(customEvents.canvasTools.editObject,
+          // obj[0])
       }
     },
     cloneObject(eventData, transform) {

@@ -38,6 +38,14 @@ export default {
       if (this.editingText === true) { this.leaveEditingMode() }
     })
 
+    // example registering a custom doubletap event.
+    // the `type` indicates the base recognizer to use from Hammer
+    // all other options are Hammer recognizer options.
+    // VueTouch.registerCustomEvent('doubletap', {
+    //   type: 'tap',
+    //   taps: 2,
+    // })
+
     // this.$nuxt.$on(customEvents.canvasTools.stickyNoteFontResize, (payload) => {
     //   if (payload.whitebirdData.type === 'StickyNoteTextBox') {
     //     this.FontResizeStickyNote(payload, this.groupObject)
@@ -90,9 +98,9 @@ export default {
         group.setControlVisible(side, false)
       })
 
-      this.$nuxt.$on(customEvents.canvasTools.editObject, (objGroup) => {
-      // group.on('mousedblclick', (objType) => {
-        if (objGroup.whitebirdData.type == group.whitebirdData.type) {
+      // this.$nuxt.$on(customEvents.canvasTools.editObject, (objGroup) => {
+      group.on('v-touch', () => {
+        // if (objGroup.whitebirdData.type == group.whitebirdData.type) {
           group.set({
             selectable: false,
             evented: false,
@@ -110,19 +118,18 @@ export default {
           // ! If not, the text box has a different size.
           // the left and upper sides of the individual objects
           // are indicated relative to the group centre.
-          console.log(objGroup.scaleX)
-          this.textBox = objGroup.item(1)
-          this.textBox.scaleX *= objGroup.scaleX
-          this.textBox.scaleY *= objGroup.scaleY
-          this.textBox.left = objGroup.left + (10 * this.textBox.scaleX)
-          this.textBox.top = objGroup.top + (10 * this.textBox.scaleY)
+          this.textBox = group.item(1)
+          this.textBox.scaleX *= group.scaleX
+          this.textBox.scaleY *= group.scaleY
+          this.textBox.left = group.left + (10 * this.textBox.scaleX)
+          this.textBox.top = group.top + (10 * this.textBox.scaleY)
 
-          objGroup.remove(objGroup.item(1))
+          group.remove(group.item(1))
           this.canvas.add(this.textBox).setActiveObject(this.textBox)
           this.textBox.enterEditing()
 
           this.canvas.renderAll()
-        }
+        //}
       })
     },
     addTextBoxSettings(textBox, group) {
