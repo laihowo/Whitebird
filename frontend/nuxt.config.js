@@ -43,7 +43,6 @@ export default {
     '~/plugins/persistedState.client.js',
     '~/plugins/i18n.js',
     '~/plugins/fabric.client.js',
-    // '~/plugins/vtouch.client.js',
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
