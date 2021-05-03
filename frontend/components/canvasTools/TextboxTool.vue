@@ -38,6 +38,37 @@ export default {
       if (this.editingText === true) { this.leaveEditingMode() }
     })
 
+    this.$nuxt.$on(customEvents.canvasTools.editObject, (group) => {
+      group.set({
+        selectable: false,
+        evented: false,
+      })
+      this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group)
+      this.$nuxt.$emit(
+        customEvents.canvasTools.setRemoveObjectEventListener,
+        false,
+      )
+      this.editingText = true
+      this.groupObject = group
+
+      // declare the textBox Variables
+      // ! The scaling must be multiplied by the scaling of the group.
+      // ! If not, the text box has a different size.
+      // the left and upper sides of the individual objects
+      // are indicated relative to the group centre.
+      this.textBox = group.item(1)
+      this.textBox.scaleX *= group.scaleX
+      this.textBox.scaleY *= group.scaleY
+      this.textBox.left = group.left + (10 * this.textBox.scaleX)
+      this.textBox.top = group.top + (10 * this.textBox.scaleY)
+
+      group.remove(group.item(1))
+      this.canvas.add(this.textBox).setActiveObject(this.textBox)
+      this.textBox.enterEditing()
+
+      this.canvas.renderAll()
+    })
+
     // example registering a custom doubletap event.
     // the `type` indicates the base recognizer to use from Hammer
     // all other options are Hammer recognizer options.

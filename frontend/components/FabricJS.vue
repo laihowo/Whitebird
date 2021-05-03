@@ -788,9 +788,9 @@ export default {
     editObject() {
       var obj = this.canvas.getActiveObjects()
       if (obj.length == 1) {
-        this.canvas.fire('editObject')
-        // this.$nuxt.$emit(customEvents.canvasTools.editObject,
-          // obj[0])
+        // this.canvas.fire('editObject')
+        this.$nuxt.$emit(customEvents.canvasTools.editObject,
+          obj[0])
       }
     },
     cloneObject(eventData, transform) {
