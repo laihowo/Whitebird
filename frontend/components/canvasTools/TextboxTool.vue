@@ -93,13 +93,15 @@ export default {
     @setControlVisible the control visibility (mt=mid_top, mr=mid_right,...) of false
     @leaveEditing = false (default Value) the Textbox (group.item(1)) setting will set to. */
     addGroupSettings(group) {
+      /*
       const invisibleControls = ['mt', 'mr', 'ml', 'mb', 'mtr']
       invisibleControls.forEach((side) => {
         group.setControlVisible(side, false)
       })
+      */
 
       // this.$nuxt.$on(customEvents.canvasTools.editObject, (objGroup) => {
-      group.on('v-touch', () => {
+      group.on('mousedblclick', () => {
         // if (objGroup.whitebirdData.type == group.whitebirdData.type) {
           group.set({
             selectable: false,

@@ -115,14 +115,16 @@ export default {
     @leaveEditing = false (default Value) the Textbox (group.item(1)) setting will set to.
      */
     addStickyNoteSettings(group) {
+      /*
       const invisibleControls = ['mt', 'mr', 'ml', 'mb', 'mtr'];
       invisibleControls.forEach((side) => {
         group.setControlVisible(side, false);
       });
+      */
 
-      this.$nuxt.$on(customEvents.canvasTools.editObject, (objType) => {
-      // group.on('mousedblclick', () => {
-        if (objType == group.whitebirdData.type) {
+      // this.$nuxt.$on(customEvents.canvasTools.editObject, (objType) => {
+      group.on('mousedblclick', () => {
+        // if (objType == group.whitebirdData.type) {
           group.set({
             selectable: false,
             evented: false,
@@ -151,7 +153,7 @@ export default {
           this.textBox.enterEditing();
 
           this.canvas.renderAll();
-        }
+        // }
       });
     },
 
