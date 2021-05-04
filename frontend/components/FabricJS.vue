@@ -225,16 +225,20 @@ export default {
     }
 
     // Socket Reference
+    /*
     this.socket = this.$nuxtSocket({
       persist: 'whitebirdSocket',
     });
+    */
 
     // Join WhiteBoard - Is this necessary?
+    /*
     this.socket.emit('joinWhiteboard', {
       sender: this.name,
       room: this.canvasId,
       message: 'Joining Whiteboard',
     });
+    */
 
     this.$nuxt.$on(customEvents.canvasTools.exportImage, () => {
       // This returns the current content as base64-Encoded PNG
@@ -287,7 +291,7 @@ export default {
         height: window.innerHeight,
       });
     }
-    this.$nuxt.$emit(customEvents.canvasTools.setRemoveObjectEventListener, true);
+    // this.$nuxt.$emit(customEvents.canvasTools.setRemoveObjectEventListener, true);
 
     this.canvas.on('selection:created', (options) => {
       var selectedGroup = options.target
@@ -525,7 +529,7 @@ export default {
         }
       }
     });
-
+    /*
     this.$nuxt.$on(customEvents.canvasTools.enliven, (payload) => {
       this.createObjectsFromJSON(payload);
     });
@@ -535,7 +539,7 @@ export default {
     this.$nuxt.$on(customEvents.canvasTools.updateObjectFromServer, (payload) => {
       this.updateObjectFromServer(payload);
     });
-
+    */
     this.$nuxt.$on('imageBackgroundChanged', (payload) => {
       this.backgroundImage = payload;
     });
@@ -545,6 +549,7 @@ export default {
 
   methods: {
     reloadCanvas() {
+      /*
       this.$nuxt.$emit(customEvents.canvasTools.updatingDataState, true);
       this.loadFonts().then(() => {
         this.$axios.get(`whiteboard/${this.canvasId}`).then((res) => {
@@ -557,6 +562,7 @@ export default {
           return undefined;
         });
       });
+      */
     },
     async loadFonts() {
       const fonts = ['Pacifico', 'VT323', 'Quicksand', 'Inconsolata', 'Roboto'];
@@ -591,6 +597,7 @@ export default {
     },
 
     createCanvasObject(canvasObject) {
+      /*
       const objectAsJson = this.customToJSON(canvasObject);
       const message = {
         sender: '',
@@ -598,8 +605,10 @@ export default {
         room: this.canvasId,
       };
       this.socket.emit('createCanvasObjectClient', message);
+      */
     },
     updateObject(canvasObject) {
+      /*
       const objectAsJson = this.customToJSON(canvasObject);
       const message = {
         sender: '',
@@ -607,8 +616,10 @@ export default {
         room: this.canvasId,
       };
       this.socket.emit('updateCanvasObjectClient', message);
+      */
     },
     removeObject(canvasObject) {
+      /*
       const objectAsJson = this.customToJSON(canvasObject);
       const message = {
         sender: '',
@@ -616,6 +627,7 @@ export default {
         room: this.canvasId,
       };
       this.socket.emit('deleteCanvasObjectClient', message);
+      */
     },
     customToJSON(canvasObject) {
       // Axios will call 'toJSON' before sending, as we cannot actually send an Object
@@ -627,6 +639,7 @@ export default {
 
     // _______________Server Events_____________
     createObjectsFromJSON(canvasObjectAsJSON) {
+      /*
       fabric.util.enlivenObjects([canvasObjectAsJSON], (enlivenedObjects) => {
         enlivenedObjects.forEach((enlivenedObject) => {
           if (enlivenedObject.whitebirdData.type === 'StickyNote') {
@@ -641,16 +654,20 @@ export default {
         });
       });
       this.canvas.renderAll();
+      */
     },
 
     deletedObjectFromServer(canvasObject) {
+      /*
       logger.log('Canvas delete!');
       this.canvas.getObjects().forEach((obj) => {
         if (obj.whitebirdData.id === canvasObject.whitebirdData.id) { this.canvas.remove(obj); }
       });
       this.canvas.renderAll();
+      */
     },
     updateObjectFromServer(canvasObject) {
+      /*
       logger.log('Canvas update!');
       this.canvas.getObjects().forEach((obj) => {
         if (obj.whitebirdData.id === canvasObject.whitebirdData.id) {
@@ -667,6 +684,7 @@ export default {
         }
       });
       this.canvas.renderAll();
+      */
     },
     createStickyToolBox(obj) {
       let ObjectFont = 'Arial';

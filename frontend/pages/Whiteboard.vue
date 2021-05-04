@@ -33,6 +33,7 @@ export default {
     }),
   },
   mounted() {
+    /*
     this.socket = this.$nuxtSocket({
       teardown: false,
       persist: 'whitebirdSocket',
@@ -41,6 +42,7 @@ export default {
     this.$nuxt.$on(customEvents.canvasTools.updatingDataState, (payload) => {
       this.loaded = payload;
     });
+    */
   },
   methods: {
     loadWhiteboardData() {
