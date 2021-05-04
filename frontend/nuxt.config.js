@@ -13,8 +13,8 @@ export default {
     title: 'Whitebird',
     meta: [
       { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: '' },
+      { name: 'viewport', content: 'width=device-width, initial-scale=0.6' },
+      { hid: 'description', name: 'description', content: 'Collaborative Digital Whiteboard' },
     ],
     link: [{ rel: 'icon', type: 'image/x-icon', href: '/favicon.svg' }],
     script: [
@@ -42,6 +42,7 @@ export default {
     '~/plugins/socketStoreInjecter.js',
     '~/plugins/persistedState.client.js',
     '~/plugins/i18n.js',
+    '~/plugins/fabric.client.js',
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)

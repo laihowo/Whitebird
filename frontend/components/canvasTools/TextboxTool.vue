@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { fabric } from 'fabric'
 import { v4 } from 'uuid'
 import { mapState } from 'vuex'
 import customEvents from '~/utils/customEvents'
@@ -22,6 +21,7 @@ export default {
       groupObject: null,
       textBox: null,
       textBoxChange: false,
+      dataType: 'textboxGroup',
     }
   },
   computed: {
@@ -37,6 +37,12 @@ export default {
 
     this.canvas.on('mouse:down', () => {
       if (this.editingText === true) { this.leaveEditingMode() }
+    })
+
+    this.$nuxt.$on(customEvents.canvasTools.editObject, (group) => {
+      if (group.whitebirdData.type == this.dataType) {
+        this.fireEditing(group)
+      }
     })
 
     // this.$nuxt.$on(customEvents.canvasTools.stickyNoteFontResize, (payload) => {
@@ -86,40 +92,15 @@ export default {
     @setControlVisible the control visibility (mt=mid_top, mr=mid_right,...) of false
     @leaveEditing = false (default Value) the Textbox (group.item(1)) setting will set to. */
     addGroupSettings(group) {
+      /*
       const invisibleControls = ['mt', 'mr', 'ml', 'mb', 'mtr']
       invisibleControls.forEach((side) => {
         group.setControlVisible(side, false)
       })
+      */
 
       group.on('mousedblclick', () => {
-        group.set({
-          selectable: false,
-          evented: false,
-        })
-        this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group)
-        this.$nuxt.$emit(
-          customEvents.canvasTools.setRemoveObjectEventListener,
-          false,
-        )
-        this.editingText = true
-        this.groupObject = group
-
-        // declare the textBox Variables
-        // ! The scaling must be multiplied by the scaling of the group.
-        // ! If not, the text box has a different size.
-        // the left and upper sides of the individual objects
-        // are indicated relative to the group centre.
-        this.textBox = group.item(1)
-        this.textBox.scaleX *= group.scaleX
-        this.textBox.scaleY *= group.scaleY
-        this.textBox.left = group.left + (10 * this.textBox.scaleX)
-        this.textBox.top = group.top + (10 * this.textBox.scaleY)
-
-        group.remove(group.item(1))
-        this.canvas.add(this.textBox).setActiveObject(this.textBox)
-        this.textBox.enterEditing()
-
-        this.canvas.renderAll()
+        this.fireEditing(group)
       })
     },
     addTextBoxSettings(textBox, group) {
@@ -194,14 +175,24 @@ export default {
         height: 0,
         whitebirdData: { 
           id: v4(),
-          type: 'textboxGroup',
+          type: this.dataType,
         },
       })
 
+      // Restore to the default zoom level.
+      this.canvas.setZoom(1)
+      
+      // Calculate the initial position according to the view port.
+      var topLeftPos = this.canvas.calcViewportBoundaries().tl
+      var offset = 100
+
+      var initLeft = topLeftPos.x + offset
+      var initTop = topLeftPos.y + offset
+
       const tbox = new fabric.Textbox('hello world', {
-        left: 100,
-        top: 100,
-        width: 150,
+        left: initLeft,
+        top: initTop,
+        width: 50,
         fill: 'rgb(0, 0, 0)',
         fontFamily: 'Arial',
         whitebirdData: {
@@ -221,13 +212,13 @@ export default {
       })
 
       const group = new fabric.Group([rectangle, tbox], {
-        scaleX: 2,
-        scaleY: 2,
+        scaleX: 1,
+        scaleY: 1,
         selectable: true,
         evented: true,
         whitebirdData: {
           id: v4(),
-          type: 'textboxGroup',
+          type: this.dataType,
         },
       })
 
@@ -237,6 +228,36 @@ export default {
       this.canvas.add(group).setActiveObject(group)
       this.canvas.renderAll()
     },
+    fireEditing (group) {
+      group.set({
+        selectable: false,
+        evented: false,
+      })
+      this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group)
+      this.$nuxt.$emit(
+        customEvents.canvasTools.setRemoveObjectEventListener,
+        false
+      )
+      this.editingText = true
+      this.groupObject = group
+
+      // declare the textBox Variables
+      // ! The scaling must be multiplied by the scaling of the group.
+      // ! If not, the text box has a different size.
+      // the left and upper sides of the individual objects
+      // are indicated relative to the group centre.
+      this.textBox = group.item(1)
+      this.textBox.scaleX *= group.scaleX
+      this.textBox.scaleY *= group.scaleY
+      this.textBox.left = group.left + (10 * this.textBox.scaleX)
+      this.textBox.top = group.top + (10 * this.textBox.scaleY)
+
+      group.remove(group.item(1))
+      this.canvas.add(this.textBox).setActiveObject(this.textBox)
+      this.textBox.enterEditing()
+
+      this.canvas.renderAll()
+    }
   },
 }
 </script>

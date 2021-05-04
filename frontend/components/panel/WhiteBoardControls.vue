@@ -1,16 +1,23 @@
 <template>
   <div class="whiteboard--menu">
-    <!-- Toolbar Top Left with board name and export, share button -->
+    <!-- Toolbar Top Left with board name and export, send button -->
     <div class="toolbar--box--top-left">
       <!-- Logo box, shows spinner when loading, logo_box is--loading, loader is--animated -->
       <div class="logo--box">
-        <a href="/"><img src="../../assets/images/identity.svg"/></a>
+        <!-- <a href="/"><i class="fas fa-backspace fa-2x"></i></a> -->
+
+        <a href="/"
+          class="toolbar--button toolbar--button--colored toolbar--big">
+          <i class="fas fa-backspace toolbar--button--icon"></i>
+        </a>
       </div>
+      
       <div class="toolbar toolbar--big flex mr--1">
         <div class="toolbar--board toolbar--board--item flex">
           <!-- Readonly name -->
           <div style="display: flex">
-            <input readonly value="Whitebird" class="toolbar--board--name" />
+            <input readonly :value="roomName"
+              class="toolbar--board--name" />
           </div>
 
           <!-- Export button -->
@@ -20,7 +27,7 @@
             @click="toggleExportDropdown"
           >
             <i class="fas fa-download toolbar--button--icon ml-3"></i>
-            <div>{{ $t('whiteboard.export') }}</div>
+            <!-- <div>{{ $t('whiteboard.export') }}</div> -->
 
             <!-- Export menu -->
             <div
@@ -59,8 +66,8 @@
         class="toolbar--button toolbar--button--colored toolbar--big"
         @click="showInviteModal = true"
       >
-        <i class="fas fa-user-plus toolbar--button--icon"></i>
-        <span>{{ $t('whiteboard.invite') }}</span>
+        <i class="far fa-paper-plane toolbar--button--icon"></i>
+        <!-- <span>{{ $t('whiteboard.send') }}</span> -->
       </div>
       <ShareWhiteboardModal :show="showInviteModal" @update-modal="closeModal" />
     </div>
@@ -77,7 +84,7 @@
               </div>
             </li>
             <!-- Pencil -->
-            <li id="toolbar-item-select" class="tools--item">
+            <li id="toolbar-item-pencil" class="tools--item">
               <div class="tools--item--button" @click="togglePencilToolbox">
                 <i class="fas fa-pencil-alt"></i>
               </div>
@@ -241,7 +248,7 @@
             </li>
 
             <!-- Sticky notes -->
-            <li id="toolbar-item-text" class="tools--item">
+            <li id="toolbar-item-note" class="tools--item">
               <div class="tools--item--button" @click="toggleStickyNotes">
                 <i class="fas fa-sticky-note"></i>
               </div>
@@ -250,71 +257,62 @@
               </div>
             </li>
 
-            <!-- Pin -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              v-if="isPinned"
-              @click="unPinObject()">
-              <div class="tools--item--button">
-                <i class="fas fa-unlock"></i>
+            <!-- Undo -->
+            <!-- <li id="toolbar-item-redo" class="tools--item">
+              <div class="tools--item--button" @click="undo()">
+                <i class="fas fa-undo"></i>
               </div>
             </li> -->
 
-            <!-- Unpin -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              v-else
-              @click="pinObject()">
-              <div class="tools--item--button">
-                <i class="fas fa-lock"></i>
+            <!-- Redo -->
+            <!-- <li id="toolbar-item-redo" class="tools--item">
+              <div class="tools--item--button" @click="redo()">
+                <i class="fas fa-redo"></i>
               </div>
             </li> -->
-
-            <!-- Bring Object To Front -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="bringObjectToFront()">
-              <div class="tools--item--button">
-                <i class="fas fa-angle-double-right"></i>
+           
+          </ul>
+        </div>
+      </div>
+      <div class="toolbar-box-mini-left mt-5" style="display: none">
+        <div class="toolbar toolbar--vertical">
+          <ul class="tools--menu">
+            <!-- Pan -->
+            <li class="tools--item">
+              <div class="tools--item--button" @click="panCanvas()">
+                <i v-if="!isPanning" class="fas fa-arrows-alt"></i>
+                <i v-else class="far fa-pause-circle"></i>
               </div>
-            </li> -->
+            </li>
 
-            <!-- Bring Object Forward -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="bringObjectForward()">
-              <div class="tools--item--button">
-                <i class="fas fa-angle-right"></i>
+            <!-- Background -->
+            <li class="tools--item">
+              <div class="tools--item--button" @click="swapBackground">
+                <i class="fas fa-border-all"></i>
               </div>
-            </li> -->
+            </li>
 
-            <!-- Send Object To Back -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="sendObjectToBack()">
-              <div class="tools--item--button">
-                <i class="fas fa-angle-double-left"></i>
+            <!-- Full Screen -->
+            <li v-if="!isFullScreen" class="tools--item">
+              <div class="tools--item--button" @click="expandScreen">
+                <i class="fas fa-expand-alt"></i>
               </div>
-            </li> -->
-
-            <!-- Send Object Backwards -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="sendObjectBackwards()">
-              <div class="tools--item--button">
-                <i class="fas fa-angle-left"></i>
+            </li>
+            <li v-if="isFullScreen" class="tools--item">
+              <div class="tools--item--button" @click="compressScreen">
+                <i class="fas fa-compress-alt"></i>
               </div>
-            </li> -->
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
 
-            <!-- Delete Object -->
-            <!-- <li id="toolbar-item-text"
-              class="tools--item"
-              @click="removeObject()">
-              <div class="tools--item--button">
-                <i class="fas fa-trash"></i>
-              </div>
-            </li> -->
-
+    <!-- View Control -->
+    <div class="toolbar-box-bottom-right">
+      <div class="toolbar-box-mini-left mt-5">
+        <div class="toolbar toolbar--vertical">
+          <ul class="tools--menu">
             <!-- Undo -->
             <li id="toolbar-item-redo" class="tools--item">
               <div class="tools--item--button" @click="undo()">
@@ -329,43 +327,49 @@
               </div>
             </li>
 
+            <!-- Pan -->
+            <li class="tools--item">
+              <div class="tools--item--button" @click="panCanvas()">
+                <i v-if="!isPanning" class="fas fa-arrows-alt"></i>
+                <i v-else class="far fa-pause-circle"></i>
+              </div>
+            </li>
+
             <!-- Background -->
-            <li id="toolbar-item-text" class="tools--item">
-              <div class="tools--item--button" @click="swapBackground">
+            <li class="tools--item">
+              <div class="tools--item--button" @click="swapBackground()">
                 <i class="fas fa-border-all"></i>
               </div>
             </li>
-           
-          </ul>
-        </div>
-      </div>
-      <div class="toolbar-box-mini-left mt-5">
-        <div class="toolbar toolbar--vertical">
-          <ul class="tools--menu">
-            <!-- Pointer -->
-            <li v-if="!isFullScreen" id="toolbar-item-pointer" class="tools--item">
-              <div class="tools--item--button" @click="expandScreen">
+
+            <!-- Full Screen -->
+            <li v-if="!isFullScreen" class="tools--item">
+              <div class="tools--item--button" @click="expandScreen()">
                 <i class="fas fa-expand-alt"></i>
               </div>
             </li>
-            <li v-if="isFullScreen" id="toolbar-item-pointer" class="tools--item">
-              <div class="tools--item--button" @click="compressScreen">
+            <li v-if="isFullScreen" class="tools--item">
+              <div class="tools--item--button" @click="compressScreen()">
                 <i class="fas fa-compress-alt"></i>
+              </div>
+            </li>
+
+            <!-- Information -->
+            <li class="tools--item">
+              <div class="tools--item--button" @click="switchInfoModal()">
+                <i class="fas fa-info-circle"></i>
               </div>
             </li>
           </ul>
         </div>
       </div>
-    </div>
-
-    <!-- Whiteboard Join code -->
-    <div v-if="canvasID" class="toolbar-box-bottom-right">
-      <div class="card">
+      <!-- <div class="card">
         <div class="card-content">
-          <p>{{ canvasID }}</p>
+          <p>Placeholder</p>
         </div>
-      </div>
+      </div> -->
     </div>
+    <WhiteboardInfoModal :show="showInfoModal" @update-modal="switchInfoModal()" />
   </div>
 </template>
 
@@ -375,8 +379,9 @@ import Slider from 'vue-custom-range-slider';
 import 'vue-custom-range-slider/dist/vue-custom-range-slider.css';
 import { ColorPicker } from 'vue-accessible-color-picker';
 import ColorPalette from '~/components/ColorPicker.vue';
-import StickyNotePicker from '~/components//StickyNotePicker.vue';
-import ShareWhiteboardModal from '~/components//modals/ShareWhiteboard.vue';
+import StickyNotePicker from '~/components/StickyNotePicker.vue';
+import ShareWhiteboardModal from '~/components/modals/ShareWhiteboard.vue';
+import WhiteboardInfoModal from '~/components/modals/WhiteboardInfo'
 import colorPalette from '~/components/_helpers/colorPalette.js';
 import customEvents from '~/utils/customEvents';
 
@@ -387,6 +392,7 @@ const logger = new WhitebirdLogger('WhiteBoardControls.vue');
 export default {
   components: {
     ShareWhiteboardModal,
+    WhiteboardInfoModal,
     Slider,
     colorPalette: ColorPalette,
     stickyNotesPicker: StickyNotePicker,
@@ -412,9 +418,12 @@ export default {
       stickyColors: [],
       whiteboardID: null,
       showInviteModal: false,
+      showInfoModal: false,
       isFullScreen: false,
       indexB: 0,
       isPinned: false,
+      roomName: 'YoTeach Room Name1234',
+      isPanning: false,
     };
   },
   computed: {
@@ -446,10 +455,30 @@ export default {
       this.colorPickerSelected = false;
       this.isStickyNotesSelected = false;
     });
+
+    var roomNameLengthLimit = 20
+    var iOS = /iPhone|iPod|iPad|Intel Mac/.test(navigator.userAgent) && !window.MSStream
+
+    // Set room name length limit on iOS.
+    if (iOS) {
+      roomNameLengthLimit = 15
+    }
+
+    // Set room name length limit on small screen size.
+    // if (screen.width <= 600) {
+    //   roomNameLengthLimit = 15
+    // }
+
+    if (this.roomName.length > roomNameLengthLimit) {
+      this.roomName = this.roomName.substr(0, roomNameLengthLimit) + '...'
+    }
   },
   methods: {
     closeModal() {
-      this.showInviteModal = !this.showInviteModal;
+      this.showInviteModal = !this.showInviteModal
+    },
+    switchInfoModal() {
+      this.showInfoModal = !this.showInfoModal
     },
     toggleMousePointerToolbox() {
       this.$nuxt.$emit(customEvents.canvasTools.drawing, { drawingMode: false });
@@ -577,25 +606,43 @@ export default {
       this.colorPickedArr.push(color);
     },
     expandScreen() {
-      this.isFullScreen = true;
-      const elem = document.documentElement;
+      this.isFullScreen = true
+      const elem = document.documentElement
+
       if (elem.requestFullscreen) {
-        elem.requestFullscreen();
+        elem.requestFullscreen()
       } else if (elem.webkitRequestFullscreen) { /* Safari */
-        elem.webkitRequestFullscreen();
+        elem.webkitRequestFullscreen()
       } else if (elem.msRequestFullscreen) { /* IE11 */
-        elem.msRequestFullscreen();
+        elem.msRequestFullscreen()
+      }
+
+      // Responsive layout for the full screen mode.
+      document.querySelector('.toolbar--box--top-left').style.visibility = 'hidden'
+      // document.querySelector('.toolbar-box-middle-left').style.marginTop = '10px'
+
+      // Reserve space for the exit full screen button on iPad Safari.
+      var iPad = /iPad|Intel Mac/.test(navigator.userAgent) && !window.MSStream
+      var isSafari = navigator.userAgent.match(/Version\/[\d\.]+.*Safari/)
+
+      if (!(iPad && isSafari)) {
+        document.querySelector('.toolbar-box-middle-left').style.marginTop = '10px'
       }
     },
     compressScreen() {
-      this.isFullScreen = false;
+      this.isFullScreen = false
+
       if (document.exitFullscreen) {
-        document.exitFullscreen();
+        document.exitFullscreen()
       } else if (document.webkitExitFullscreen) { /* Safari */
-        document.webkitExitFullscreen();
+        document.webkitExitFullscreen()
       } else if (document.msExitFullscreen) { /* IE11 */
-        document.msExitFullscreen();
+        document.msExitFullscreen()
       }
+
+      // Restore to the original layout.
+      document.querySelector('.toolbar--box--top-left').style.visibility = 'visible'
+      document.querySelector('.toolbar-box-middle-left').style.marginTop = '70px'
     },
     swapBackground() {
       if (this.indexB === 3) {
@@ -606,37 +653,29 @@ export default {
       this.$nuxt.$emit('imageBackgroundChanged', element);
       this.indexB += 1;
     },
-    pinObject() {
-      this.isPinned = true
-      this.$nuxt.$emit(customEvents.canvasTools.pinObject)
-    },
-    unPinObject() {
-      this.isPinned = false
-      this.$nuxt.$emit(customEvents.canvasTools.unPinObject)
-    },
-    bringObjectToFront() {
-      this.$nuxt.$emit(customEvents.canvasTools.bringObjectToFront)
-    },
-    bringObjectForward() {
-      this.$nuxt.$emit(customEvents.canvasTools.bringObjectForward)
-    },
-    sendObjectToBack() {
-      this.$nuxt.$emit(customEvents.canvasTools.sendObjectToBack)
-    },
-    sendObjectBackwards() {
-      this.$nuxt.$emit(customEvents.canvasTools.sendObjectBackwards)
-    },
-    removeObject() {
-      this.$nuxt.$emit(customEvents.canvasTools.removeObject)
-    },
     undo() {
       this.$nuxt.$emit(customEvents.canvasTools.undo)
     },
     redo() {
       this.$nuxt.$emit(customEvents.canvasTools.redo)
     },
+    panCanvas() {
+      this.isPanning = !this.isPanning
+      this.$nuxt.$emit(customEvents.canvasTools.pan, this.isPanning)
+
+      // Hide the drawing tool bar in the panning mode.
+      var drawingToolbar = document.querySelector('.toolbar-box-middle-left')
+      if (this.isPanning) {
+        drawingToolbar.style.visibility = 'hidden'
+      } else {
+        drawingToolbar.style.visibility = 'visible'
+      }
+
+      // Switch to the pointer mode.
+      this.toggleMousePointerToolbox()
+    },
   },
-};
+}
 </script>
 
 <style scoped>

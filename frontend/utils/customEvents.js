@@ -21,6 +21,7 @@ export default {
 		updatingDataState: 'EventTrigger_UpdatingState',
     	pinObject: 'EventTrigger_PinObject',
 		unPinObject: 'EventTrigger_UnPinObject',
+		editObject: 'EventTrigger_editObject',
 		bringObjectToFront: 'EventTrigger_BringObjectToFront',
 		bringObjectForward: 'EventTrigger_BringObjectForward',
 		sendObjectToBack: 'EventTrigger_SendObjectToBack',
@@ -28,5 +29,6 @@ export default {
 		removeObject: 'EventTrigger_RemoveObject',
 		undo: 'EventTrigger_Undo',
 		redo: 'EventTrigger_Redo',
+		pan: 'EventTrigger_Pan',
 	},
 };

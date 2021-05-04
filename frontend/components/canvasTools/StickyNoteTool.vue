@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { fabric } from 'fabric';
 import { v4 } from 'uuid';
 import { mapState } from 'vuex';
 import customEvents from '~/utils/customEvents';
@@ -30,6 +29,7 @@ export default {
       groupObject: null,
       textBox: null,
       textBoxChange: false,
+      dataType: 'StickyNote',
     };
   },
   computed: {
@@ -68,6 +68,13 @@ export default {
         this.FontResizeStickyNote(payload.item(1), payload);
       }
     });
+
+    this.$nuxt.$on(customEvents.canvasTools.editObject, (group) => {
+      if (group.whitebirdData.type == this.dataType) {
+        this.fireEditing(group)
+      }
+    })
+
   },
   methods: {
     /*
@@ -116,41 +123,16 @@ export default {
     @leaveEditing = false (default Value) the Textbox (group.item(1)) setting will set to.
      */
     addStickyNoteSettings(group) {
-      const invisibleControls = ['mt', 'mr', 'ml', 'mb', 'mtr'];
+      /*
+      const invisibleControls = ['mt', 'mr', 'ml', 'mb', 'mtr']
       invisibleControls.forEach((side) => {
-        group.setControlVisible(side, false);
-      });
+        group.setControlVisible(side, false)
+      })
+      */
 
       group.on('mousedblclick', () => {
-        group.set({
-          selectable: false,
-          evented: false,
-        });
-        this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group);
-        this.$nuxt.$emit(
-          customEvents.canvasTools.setRemoveObjectEventListener,
-          false,
-        );
-        this.editingText = true;
-        this.groupObject = group;
-
-        // declare the textBox Variables
-        // ! The scaling must be multiplied by the scaling of the group.
-        // ! If not, the text box has a different size.
-        // the left and upper sides of the individual objects
-        // are indicated relative to the group centre.
-        this.textBox = group.item(1);
-        this.textBox.scaleX *= group.scaleX;
-        this.textBox.scaleY *= group.scaleY;
-        this.textBox.left = group.left + (10 * this.textBox.scaleX);
-        this.textBox.top = group.top + (10 * this.textBox.scaleY);
-
-        group.remove(group.item(1));
-        this.canvas.add(this.textBox).setActiveObject(this.textBox);
-        this.textBox.enterEditing();
-
-        this.canvas.renderAll();
-      });
+        this.fireEditing(group)
+      })
     },
 
     addTextBoxSettings(textBox, group) {
@@ -250,15 +232,25 @@ export default {
 
     createStickyNote(payload) {
       fabric.loadSVGFromURL(this.getStickyNote(payload.color), (objects, options) => {
-        const SVGObject = fabric.util.groupSVGElements(objects, options);
+        const SVGObject = fabric.util.groupSVGElements(objects, options)
         SVGObject.whitebirdData = {
           id: v4(),
-          type: 'StickyNote',
-        };
+          type: this.dataType,
+        }
+
+        // Restore to the default zoom level.
+        this.canvas.setZoom(1)
+        
+        // Calculate the initial position according to the view port.
+        var topLeftPos = this.canvas.calcViewportBoundaries().tl
+        var offset = 100
+
+        var initLeft = topLeftPos.x + offset
+        var initTop = topLeftPos.y + offset
 
         const text = new fabric.Textbox('Text', {
-          left: 100,
-          top: 100,
+          left: initLeft,
+          top: initTop,
           width: SVGObject.width - 20,
           fontSize: 166.6,
           lockScalingY: true,
@@ -270,7 +262,7 @@ export default {
             tempObject: true,
             type: 'StickyNoteTextBox',
           },
-        });
+        })
 
         if (payload.color === '#000000') {
           text.set({ fill: 'rgb(255,255,255)' });
@@ -283,13 +275,13 @@ export default {
         });
 
         const group = new fabric.Group([SVGObject, text], {
-          scaleX: 0.5,
-          scaleY: 0.5,
+          scaleX: 0.3,
+          scaleY: 0.3,
           selectable: true,
           evented: true,
           whitebirdData: {
             id: v4(),
-            type: 'StickyNote',
+            type: this.dataType,
           },
         });
 
@@ -299,6 +291,36 @@ export default {
         this.canvas.add(group).setActiveObject(group);
         this.canvas.renderAll();
       });
+    },
+    fireEditing (group) {
+      group.set({
+        selectable: false,
+        evented: false,
+      })
+      this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group)
+      this.$nuxt.$emit(
+        customEvents.canvasTools.setRemoveObjectEventListener,
+        false
+      )
+      this.editingText = true
+      this.groupObject = group
+
+      // declare the textBox Variables
+      // ! The scaling must be multiplied by the scaling of the group.
+      // ! If not, the text box has a different size.
+      // the left and upper sides of the individual objects
+      // are indicated relative to the group centre.
+      this.textBox = group.item(1)
+      this.textBox.scaleX *= group.scaleX
+      this.textBox.scaleY *= group.scaleY
+      this.textBox.left = group.left + (10 * this.textBox.scaleX)
+      this.textBox.top = group.top + (10 * this.textBox.scaleY)
+
+      group.remove(group.item(1))
+      this.canvas.add(this.textBox).setActiveObject(this.textBox)
+      this.textBox.enterEditing()
+
+      this.canvas.renderAll()
     },
   },
 };

@@ -3,7 +3,6 @@
 </template>
 
 <script>
-import { fabric } from 'fabric'
 import { v4 } from 'uuid'
 import customEvents from '~/utils/customEvents'
 

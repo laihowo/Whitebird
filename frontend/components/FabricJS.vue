@@ -1,8 +1,7 @@
 <template>
-  <div id="canvas-wrapper"
-    class="canvas-wrapper"
+  <div class="canvas-wrapper"
     :class="backgroundImage">
-    <canvas id="canvas"> </canvas>
+    <canvas id="canvas"></canvas>
     <client-only>
       <RectangleTool :canvas="canvas"></RectangleTool>
       <TextboxTool :canvas="canvas"></TextboxTool>
@@ -33,12 +32,12 @@
       v-on:sendBackwards-img="sendBackwardsImg = $event"
       v-on:pin-img="pinImg = $event"
       v-on:unPin-img="unPinImg = $event"
+      v-on:edit-img="editImg = $event"
       v-on:clone-img="cloneImg = $event"></ControlIcon>
   </div>
 </template>
 
 <script>
-import { fabric } from 'fabric'
 import { mapState } from 'vuex'
 import { jsPDF } from 'jspdf'
 import { v4 } from 'uuid'
@@ -88,8 +87,11 @@ export default {
       sendBackwardsImg: null,
       pinImg: null,
       unPinImg: null,
+      editImg: null,
       cloneImg: null,
       cornerSize: 24,
+      pausePanning: true,
+      pan: false,
     }
   },
   computed: {
@@ -191,6 +193,19 @@ export default {
       visible: false,
     })
 
+    // Drawing edit icon
+    fabric.Object.prototype.controls.edit = new fabric.Control({
+      x: 1,
+      y: 0,
+      offsetX: -16,
+      offsetY: -16,
+      cursorStyle: 'pointer',
+      mouseUpHandler: this.editObject,
+      render: this.renderIcon(this.editImg),
+      cornerSize: this.cornerSize,
+      visible: true,
+    })
+
     // Drawing clone icon
     // fabric.Object.prototype.controls.clone = new fabric.Control({
     //   x: -0.5,
@@ -287,12 +302,22 @@ export default {
         var selectedObjs = selectedGroup._objects
         var i
         for (i = 0; i < selectedObjs.length; i++) {
-          if (selectedObjs[i].lockRotation == true) {
+          if (selectedObjs[i].lockRotation) {
             selectedGroup.removeWithUpdate(selectedObjs[i])
           }
         }
+
+        // Deselect all objects if only the locked objects are selected.
+        if (selectedObjs.length == 1 && selectedObjs[0].lockRotation) {
+          this.canvas.discardActiveObject()
+        }
       }
+
+      this.pausePanning = true;
     })
+
+    // Disabled the object group selection by shift key. 
+    this.canvas.selectionKey = null
 
     this.canvas.on('mouse:down', (options) => {
       this.$nuxt.$emit(customEvents.canvasTools.CloseAllWhiteBoardControls, options)
@@ -311,6 +336,100 @@ export default {
       } else {
         this.containers.pop()
       }
+
+      // Press the pan button to trigger the pan.
+      var e = options.e
+      if (this.pan == true) {
+        this.canvas.isDragging = true
+        this.canvas.selection = false
+
+        var touches = e.touches
+        if (touches && touches.length >= 1) {
+          this.canvas.lastPosX = touches[0].clientX
+          this.canvas.lastPosY = touches[0].clientY
+        } else if (e.clientX) {
+          this.canvas.lastPosX = e.clientX
+          this.canvas.lastPosY = e.clientY
+        }
+      }
+    })
+
+    this.canvas.on('mouse:move', (options) => {
+      // Pan around the canvas on mouse move.
+      if (this.canvas.isDragging) {
+        var e = options.e
+        var vpt = this.canvas.viewportTransform
+
+        var touches = e.touches
+        if (touches && touches.length >= 1) {
+          vpt[4] += touches[0].clientX - this.canvas.lastPosX
+          vpt[5] += touches[0].clientY - this.canvas.lastPosY
+          this.canvas.lastPosX = touches[0].clientX
+          this.canvas.lastPosY = touches[0].clientY
+        } else if (e.clientX) {
+          vpt[4] += e.clientX - this.canvas.lastPosX
+          vpt[5] += e.clientY - this.canvas.lastPosY
+          this.canvas.lastPosX = e.clientX
+          this.canvas.lastPosY = e.clientY
+        }
+
+        this.canvas.requestRenderAll()
+      }
+    })
+
+    this.canvas.on('mouse:up', (options) => {
+      // On mouse up we want to recalculate new interaction.
+      // For all objects, so we call setViewportTransform.
+      this.canvas.setViewportTransform(this.canvas.viewportTransform)
+      this.canvas.isDragging = false
+      this.canvas.selection = true
+    })
+
+    this.canvas.on('mouse:wheel', (options) => {
+      // Use mouse wheel to zoom.
+      var delta = options.e.deltaY
+      var zoom = this.canvas.getZoom()
+      zoom *= 0.999 ** delta
+      if (zoom > 20) zoom = 20
+      if (zoom < 0.01) zoom = 0.01
+      // Center the canvas around the point where the cursor is
+      this.canvas.zoomToPoint({
+        x: options.e.offsetX,
+        y: options.e.offsetY,
+      }, zoom)
+
+      options.e.preventDefault()
+      options.e.stopPropagation()
+    })
+
+    this.canvas.on({
+      // Use the pinch gesture to zoom canvas only if no object is selected.
+      'touch:gesture': (e) => {
+        var obj = this.canvas.getActiveObjects()
+        
+        if (e.e.touches && e.e.touches.length == 2
+          && obj.length == 0)
+        {
+          this.canvas.selection = false
+
+          var point = new fabric.Point(e.self.x, e.self.y)
+          if (e.self.state == "start") {
+            this.canvas.zoomStartScale = this.canvas.getZoom()
+          }
+          var delta = this.canvas.zoomStartScale * e.self.scale
+          this.canvas.zoomToPoint(point, delta)
+        }
+      },
+      'object:selected': (e) => {
+
+      },
+      'touch:drag': (e) => {
+
+      },
+    })
+
+    this.$nuxt.$on(customEvents.canvasTools.pan, (isPanning) => {
+      this.pan = isPanning
     })
 
     /** callback for sticky notes and textbox */
@@ -578,7 +697,7 @@ export default {
     },
 
     addDragAndDrop() {
-      const canvasWrapper = document.getElementById('canvas-wrapper');
+      const canvasWrapper = document.querySelector('.canvas-wrapper')
       canvasWrapper.addEventListener('drop', (e) => {
         e = e || window.event;
         if (e.preventDefault) {
@@ -665,6 +784,13 @@ export default {
     },
     unPinObject() {
       this.$nuxt.$emit(customEvents.canvasTools.unPinObject)
+    },
+    editObject() {
+      var obj = this.canvas.getActiveObjects()
+      if (obj.length == 1) {
+        this.$nuxt.$emit(customEvents.canvasTools.editObject,
+          obj[0])
+      }
     },
     cloneObject(eventData, transform) {
       var target = transform.target
