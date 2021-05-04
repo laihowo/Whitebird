@@ -21,6 +21,7 @@ export default {
       groupObject: null,
       textBox: null,
       textBoxChange: false,
+      dataType: 'textboxGroup',
     }
   },
   computed: {
@@ -39,45 +40,10 @@ export default {
     })
 
     this.$nuxt.$on(customEvents.canvasTools.editObject, (group) => {
-      if (group.whitebirdData.type == 'textboxGroup') {
-      group.set({
-        selectable: false,
-        evented: false,
-      })
-      this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group)
-      this.$nuxt.$emit(
-        customEvents.canvasTools.setRemoveObjectEventListener,
-        false,
-      )
-      this.editingText = true
-      this.groupObject = group
-
-      // declare the textBox Variables
-      // ! The scaling must be multiplied by the scaling of the group.
-      // ! If not, the text box has a different size.
-      // the left and upper sides of the individual objects
-      // are indicated relative to the group centre.
-      this.textBox = group.item(1)
-      this.textBox.scaleX *= group.scaleX
-      this.textBox.scaleY *= group.scaleY
-      this.textBox.left = group.left + (10 * this.textBox.scaleX)
-      this.textBox.top = group.top + (10 * this.textBox.scaleY)
-
-      group.remove(group.item(1))
-      this.canvas.add(this.textBox).setActiveObject(this.textBox)
-      this.textBox.enterEditing()
-
-      this.canvas.renderAll()
+      if (group.whitebirdData.type == this.dataType) {
+        this.fireEditing(group)
       }
     })
-
-    // example registering a custom doubletap event.
-    // the `type` indicates the base recognizer to use from Hammer
-    // all other options are Hammer recognizer options.
-    // VueTouch.registerCustomEvent('doubletap', {
-    //   type: 'tap',
-    //   taps: 2,
-    // })
 
     // this.$nuxt.$on(customEvents.canvasTools.stickyNoteFontResize, (payload) => {
     //   if (payload.whitebirdData.type === 'StickyNoteTextBox') {
@@ -133,38 +99,8 @@ export default {
       })
       */
 
-      // this.$nuxt.$on(customEvents.canvasTools.editObject, (objGroup) => {
       group.on('mousedblclick', () => {
-        // if (objGroup.whitebirdData.type == group.whitebirdData.type) {
-          group.set({
-            selectable: false,
-            evented: false,
-          })
-          this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group)
-          this.$nuxt.$emit(
-            customEvents.canvasTools.setRemoveObjectEventListener,
-            false,
-          )
-          this.editingText = true
-          this.groupObject = group
-
-          // declare the textBox Variables
-          // ! The scaling must be multiplied by the scaling of the group.
-          // ! If not, the text box has a different size.
-          // the left and upper sides of the individual objects
-          // are indicated relative to the group centre.
-          this.textBox = group.item(1)
-          this.textBox.scaleX *= group.scaleX
-          this.textBox.scaleY *= group.scaleY
-          this.textBox.left = group.left + (10 * this.textBox.scaleX)
-          this.textBox.top = group.top + (10 * this.textBox.scaleY)
-
-          group.remove(group.item(1))
-          this.canvas.add(this.textBox).setActiveObject(this.textBox)
-          this.textBox.enterEditing()
-
-          this.canvas.renderAll()
-        //}
+        this.fireEditing(group)
       })
     },
     addTextBoxSettings(textBox, group) {
@@ -239,7 +175,7 @@ export default {
         height: 0,
         whitebirdData: { 
           id: v4(),
-          type: 'textboxGroup',
+          type: this.dataType,
         },
       })
 
@@ -282,7 +218,7 @@ export default {
         evented: true,
         whitebirdData: {
           id: v4(),
-          type: 'textboxGroup',
+          type: this.dataType,
         },
       })
 
@@ -292,6 +228,36 @@ export default {
       this.canvas.add(group).setActiveObject(group)
       this.canvas.renderAll()
     },
+    fireEditing (group) {
+      group.set({
+        selectable: false,
+        evented: false,
+      })
+      this.$nuxt.$emit(customEvents.canvasTools.sendCustomModified, group)
+      this.$nuxt.$emit(
+        customEvents.canvasTools.setRemoveObjectEventListener,
+        false
+      )
+      this.editingText = true
+      this.groupObject = group
+
+      // declare the textBox Variables
+      // ! The scaling must be multiplied by the scaling of the group.
+      // ! If not, the text box has a different size.
+      // the left and upper sides of the individual objects
+      // are indicated relative to the group centre.
+      this.textBox = group.item(1)
+      this.textBox.scaleX *= group.scaleX
+      this.textBox.scaleY *= group.scaleY
+      this.textBox.left = group.left + (10 * this.textBox.scaleX)
+      this.textBox.top = group.top + (10 * this.textBox.scaleY)
+
+      group.remove(group.item(1))
+      this.canvas.add(this.textBox).setActiveObject(this.textBox)
+      this.textBox.enterEditing()
+
+      this.canvas.renderAll()
+    }
   },
 }
 </script>

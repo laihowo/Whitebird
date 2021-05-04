@@ -788,7 +788,6 @@ export default {
     editObject() {
       var obj = this.canvas.getActiveObjects()
       if (obj.length == 1) {
-        console.log(obj[0].whitebirdData.type)
         this.$nuxt.$emit(customEvents.canvasTools.editObject,
           obj[0])
       }
