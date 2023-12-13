@@ -1,12 +1,6 @@
-[![Gitpod ready-to-code](https://img.shields.io/badge/Gitpod-ready--to--code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/BuchholzTim/Whitebird)
+![Whitebird Banner](https://github.com/BuchholzTim/Whitebird/wiki/images/banner.png)
 
-![](https://github.com/BuchholzTim/Whitebird/wiki/images/banner.png)
-
-Whitebird is an open-source, web-based, collaborative, digital Whiteboard built with [NestJS](https://nestjs.com/), [MongoDB](https://www.mongodb.com/), [NuxtJs](https://nuxtjs.org/) and [FabricJs](https://github.com/fabricjs/fabric.js).
-
-The application was developed as part as a study project at the [Hochschule Kaiserslautern](https://github.com/HochschuleKaiserslautern).
-Due to limited time, we cannot promise to actively continue development on this project, but we will of course look into Pull Requests!
-So feel free to send us a PR if you have something meaningful to add. We would really appreciate it.
+Whitebird is an open-source, web-based, collaborative, digital Whiteboard. My modification focused on VueJS and [FabricJS](https://github.com/fabricjs/fabric.js).
 
 <p align="center">
   <img src="https://github.com/BuchholzTim/Whitebird/wiki/images/demo.gif">
@@ -39,4 +33,4 @@ To run the application you can use docker to setup the application. Visit our [G
 
 #### For Developers
 
-As a developer always feel free to create issues or maybe try to add your own functionality/ feature to the project. We have created a [Getting Started for Developers](https://github.com/BuchholzTim/Whitebird/wiki/Getting-Started-Dev), where the installation steps are explained. For further information about the used [Technologies](https://github.com/BuchholzTim/Whitebird/wiki/Technologies) and the [Architecture](https://github.com/BuchholzTim/Whitebird/wiki/Architecture) visit the corresponding pages.
+As a developer always feel free to create issues or maybe try to add your own functionality / feature to the project. We have created a [Getting Started for Developers](https://github.com/BuchholzTim/Whitebird/wiki/Getting-Started-Dev), where the installation steps are explained. For further information about the used [Technologies](https://github.com/BuchholzTim/Whitebird/wiki/Technologies) and the [Architecture](https://github.com/BuchholzTim/Whitebird/wiki/Architecture) visit the corresponding pages.
